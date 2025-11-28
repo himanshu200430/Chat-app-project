@@ -31,8 +31,8 @@ const onSubmitHandler = (event)=>{
         via-red-500 
         to-black
         backdrop-blur-xl shadow-xl shadow-black text-white border-yellow-400  p-6 flex flex-col gap-6 rounded-lg'>
-        <h2 className='font-md text-3xl flex
-         justify-center text-amber-400  items-center'>
+        <h2 className='font-md text-2xl flex
+         justify-between text-amber-400  items-center'>
          {curstate}
          {isDataSubmitted && <img onClick={()=>setisDataSubmitted(false)} src={assets.arrow_icon} alt="" className='w-5 cursor-pointer' />}
         </h2>

@@ -3,7 +3,7 @@ import assets, { messagesDummyData} from '../assets/chat-app-assets/assets'
 import { formatMessageTime } from '../lib/utils'
 import { Chatcontext } from '../../context/Chatcontext'
 import { Authcontext } from '../../context/Authcontext'
-import { GalleryHorizontalIcon } from 'lucide-react'
+
 const ChatContainer = () => {
   const { messages,selectedUser,setSelectedUser,sendMessage,getMessages } = useContext(Chatcontext)
   const { authUser, onlineUser} = useContext(Authcontext)

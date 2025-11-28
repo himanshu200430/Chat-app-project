@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { Authcontext } from '../../context/Authcontext'
 import assets from '../assets/chat-app-assets/assets'
 import { Chatcontext } from '../../context/Chatcontext'
+import { Menu } from 'lucide-react'
 const Sidebar = () => {
   const {getUsers,users, selectedUser, setSelectedUser,unseenMessages,setUnseenMessages} = useContext(Chatcontext)
   const {logout,onlineUser} = useContext(Authcontext)
@@ -29,11 +30,7 @@ const Sidebar = () => {
 
           {/* Right side menu */}
           <div className="relative group">
-            <img 
-              className='max-h-5 cursor-pointer' 
-              src="./src/assets/chat-app-assets/menu_icon.png" 
-              alt="menu" 
-            />
+            <Menu size={24}/>
 
             {/* Dropdown */}
             <div className='absolute top-full right-0 z-20 w-32 p-3 rounded-md bg-gradient-to-r 
