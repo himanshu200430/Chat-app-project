@@ -44,8 +44,9 @@ const login = async (state, credentials) => {
             localStorage.setItem("token", data.token)
             toast.success(data.message)
         }
+
         else{
-            toast.error(data.message)
+            toast.error("Either Password or Email is Incorrect")
         }
         
     } catch (error) {
@@ -103,9 +104,8 @@ const updateProfile = async (body) => {
         useEffect(()=>{
             if(token){
                 axios.defaults.headers.common["token"] = token;
-                checkAuth(); // अब यह केवल तभी चलेगा जब token होगा
+                checkAuth();
             } else {
-                // अगर token नहीं है, तो ensure करें कि authUser null है
                 setAuthUser(null); 
             }
         },[token])

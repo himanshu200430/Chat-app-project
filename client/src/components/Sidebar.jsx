@@ -9,6 +9,7 @@ const Sidebar = () => {
   const {logout,onlineUser} = useContext(Authcontext)
   const [input,setInput] = useState(false)
   const navigate = useNavigate()
+  const [click,setClick] = useState("")
 
   const filteredUsers = input ? users.filter((user) =>
     user.fullname.toLowerCase().includes(input.toLowerCase())
@@ -30,14 +31,15 @@ const Sidebar = () => {
 
           {/* Right side menu */}
           <div className="relative group">
-            <Menu size={24}/>
+            <Menu size={24} className='cursor-pointer' onClick={()=>setClick(prev => prev === "Trigger" ? "" : "Trigger")}/>
 
             {/* Dropdown */}
+            { click ==="Trigger" &&
             <div className='absolute top-full right-0 z-20 w-32 p-3 rounded-md bg-gradient-to-r 
         from-red-900 
         via-red-500 
         to-black
-        backdrop-blur-xl border-amber-400 text-white shadow-lg shadow-black hidden group-hover:block '>
+        backdrop-blur-xl border-amber-400 text-white shadow-lg shadow-black '>
               <p 
                 onClick={() => navigate('/profile')} 
                 className='cursor-pointer text-sm'
@@ -47,6 +49,7 @@ const Sidebar = () => {
               <hr className='my-2 border-t border-amber-500' />
               <p onClick={()=> logout()} className='cursor-pointer text-sm'>Logout</p>
             </div>
+            }
           </div>
         </div>
           <div className='bg-amber-500 border-3 border-amber-900 shadow-xl shadow-black rounded-full flex items-center gap-2 py-3 px-4 mt-5'>
