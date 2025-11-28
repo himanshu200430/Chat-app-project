@@ -23,7 +23,7 @@ const onSubmitHandler = (event)=>{
   login(curstate === "Sign Up" ? "signup" : "login",{ fullname:fullName,email,password,bio})
 }
   return (
-    <div className='backdrop-blur-lg min-h-screen flex gap-4 sm:justify-evenly max-sm:flex-col items-center py-30'>
+    <div className='backdrop-blur-xl min-h-screen flex gap-4 sm:justify-evenly max-sm:flex-col items-center py-30'>
     
       
       <form onSubmit={onSubmitHandler} className='border-2 bg-gradient-to-r 

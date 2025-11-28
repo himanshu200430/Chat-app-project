@@ -59,7 +59,7 @@ const Rightsidebar = () => {
         </div>
       </div>
 
-      <button onClick={()=> logout()} className='absolute bottom-10 left-1/2 transform -translate-x-1/2 bg-amber-400 text-black border-amber-950 shadow-lg shadow-black
+      <button onClick={()=> logout()} className='absolute bottom-5 left-1/2 transform -translate-x-1/2 bg-amber-400 text-black border-amber-950 shadow-lg shadow-black
        text-sm hover:text-md  font-light py-2 px-20 cursor-pointer rounded-full'>
         Logout
       </button>

@@ -43,22 +43,12 @@ const App = () => {
           top: 0,
           left: 0,
           width: '100%',
-          height: '100%', // Ensure it covers the height of the parent
-          zIndex: -1, // Crucially, use a negative z-index to push it to the back
-          // You can move the height/width styles from the Balatro wrapper here, 
-          // or adjust based on how Balatro renders. 
-          // I've set a minimum height on the parent to ensure content has space.
+          height: '100%', //
         }}>
           <Suspense fallback={
             // Jab tak Balatro load nahi hota, yeh div dikhega
             <div style={{
-              width: '100%',
-              height: '100%',
-              backgroundColor: 'rgba(0,0,0,0.5)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: 'white'
+              
             }}>
               Loading Animation...
             </div>
