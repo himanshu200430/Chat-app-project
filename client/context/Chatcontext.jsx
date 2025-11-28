@@ -1,4 +1,4 @@
-import { createContext, useState, useContext,useEffect } from "react";
+import { createContext, useState, useContext, useEffect } from "react";
 import { Authcontext } from "./Authcontext";
 import toast from "react-hot-toast";
 
@@ -12,7 +12,8 @@ export const ChatProvider = ({children})=>{
     const [unseenMessages, setUnseenMessages] = useState({});
 
     const {socket, axios} = useContext(Authcontext);
-    //function to get all users
+    
+    // function to get all users
     const getUsers = async()=>{
         try {
             const {data} = await axios.get("/api/messages/users");
@@ -23,10 +24,8 @@ export const ChatProvider = ({children})=>{
             else{
                 toast.error(data.message);
             }
-            
         } catch (error) {
             toast.error(error.message); 
-            
         }
     }
 
@@ -47,61 +46,70 @@ export const ChatProvider = ({children})=>{
         try {
             const { data } = await axios.post(`/api/messages/send/${selectedUser._id}`, messageData);
             if (data.success) {
+                // ✅ Correct: Functional update form already present
                 setMessages((prevMessages) => [...prevMessages, data.newMessage]); 
             } 
             else {
                 toast.error(data.message);
             }
         } catch (error) {
-            toast.error(error.message);           
+            toast.error(error.message);        
         }
     }
 
-    //function to subscribe to messages for selected user
-    const subscribeToMessages = () => {
+    // 💡 FIX: Removed separate subscribeToMessages and unsubscribeFromMessages functions.
+    // Logic is now directly handled in useEffect for maximum stability.
+    useEffect(() => {
         if (!socket) return;
 
-        socket.on("newMessage", (newMessage) => {
+        // 💡 FIX: Listener function ko useEffect ke andar define kiya. 
+        // Yeh clean closure ensure karta hai jo latest selectedUser ko use karta hai.
+        const handleNewMessage = (newMessage) => {
             if (selectedUser && newMessage.senderId === selectedUser._id) {
                 newMessage.seen = true;
+                
+                // Functional update is good for avoiding stale state
                 setMessages((prevMessages) => [...prevMessages, newMessage]);
+                
                 axios.put(`/api/messages/mark/${newMessage._id}`);
             } else {
                 setUnseenMessages((prevUnseenMessages) => ({
                     ...prevUnseenMessages, [newMessage.senderId]: 
-                    prevUnseenMessages[newMessage.senderId] ? prevUnseenMessages[newMessage.senderId]+1 : 1,
+                    prevUnseenMessages[newMessage.senderId] ? prevUnseenMessages[newMessage.senderId] + 1 : 1,
                 }));
-            }})
+            }
+        };
 
-    }
+        // 1. Attach the specific listener function
+        socket.on("newMessage", handleNewMessage);
 
-    // function to unsubscribe from messages
-    const unsubscribeFromMessages = () => {
-        if (socket){
-             socket.off("newMessage");
-        }
-    }
+        // 2. Cleanup: Remove the exact listener function instance.
+        // 💡 FIX: socket.off("event", handler) ensures only this instance is removed,
+        // preventing duplicate listeners and improving reliability on re-run.
+        return () => {
+            socket.off("newMessage", handleNewMessage);
+        };
+        
+        // Dependencies are socket, selectedUser, and axios (for linting)
+    }, [socket, selectedUser, axios]); 
 
-    useEffect(() => {
-        subscribeToMessages();
-        return () => unsubscribeFromMessages();
-
-    },[socket, selectedUser])
+    // 💡 FIX: Removed the empty and unnecessary useEffect that previously called the functions.
+    
     const value = {
        messages,
-        users,
-        selectedUser,
-        getUsers,
-        getMessages,
-        sendMessage,
-        setSelectedUser,
-        unseenMessages,
-        setUnseenMessages,
+       users,
+       selectedUser,
+       getUsers,
+       getMessages,
+       sendMessage,
+       setSelectedUser,
+       unseenMessages,
+       setUnseenMessages,
     } 
 
-  return (
-    <Chatcontext.Provider value ={value}>
-        {children}
-    </Chatcontext.Provider>
-  )
+    return (
+        <Chatcontext.Provider value ={value}>
+            {children}
+        </Chatcontext.Provider>
+    )
 }

@@ -14,26 +14,25 @@ const App = () => {
   const { authUser } = useContext(Authcontext);
   const uiRef = useRef(null);
 
-  // Background mount only once
-  const [bgMounted, setBgMounted] = React.useState(false);
-  // UI fade-in trigger
-  const [uiAnimate, setUiAnimate] = React.useState(false);
+  // 🌟 KEY CHANGE: uiAnimate starts at FALSE.
+  // The UI will remain hidden until this is set to true by Balatro.
+  const [uiAnimate, setUiAnimate] = React.useState(false); 
 
-  useEffect(() => {
-    if (!bgMounted) setBgMounted(true);
-  }, [bgMounted]);
-
-  // Trigger GSAP animation once background is ready
+  // Function to be called by Balatro when it is fully loaded.
   const handleBgLoadComplete = () => {
+    // This is the trigger!
     setUiAnimate(true);
   };
 
   useEffect(() => {
+    // This animation runs ONLY when uiAnimate becomes true (i.e., Balatro is loaded).
     if (uiAnimate && uiRef.current) {
       gsap.fromTo(
         uiRef.current,
-        { opacity: 0, y: 20 },
-        { opacity: 1, y: 0, duration: 0.9, ease: "power3.out" }
+        // FROM: Start completely invisible and slightly lower
+        { opacity: 0, y: 30 }, 
+        // TO: Fade in over 1 second, settle at final position
+        { opacity: 1, y: 0, duration: 1, ease: "power4.out" } 
       );
     }
   }, [uiAnimate]);
@@ -41,24 +40,29 @@ const App = () => {
   return (
     <div className="app-container relative w-full min-h-screen">
 
-      {/* ---------- BACKGROUND ANIMATION ---------- */}
-      {bgMounted && (
-        <div className="fixed inset-0 -z-10 w-full h-full overflow-hidden">
-          <Suspense
-            fallback={
-              <div className="flex flex-col items-center justify-center h-full backdrop-blur-sm text-white">
-                <div className="w-8 h-8 rounded-full border-4 border-white/20 border-t-white animate-spin"></div>
-                <p className="mt-3 text-lg opacity-80">Preparing your experience…</p>
-              </div>
-            }
-          >
-            <Balatro onLoadComplete={handleBgLoadComplete} />
-          </Suspense>
-        </div>
-      )}
+      {/* ---------- BACKGROUND ANIMATION (Flicker Fix Applied) ---------- */}
+      <div className="fixed inset-0 -z-10 w-full h-full overflow-hidden">
+        <Suspense
+          fallback={
+            // Solid black background to prevent white flickering
+            <div className="flex flex-col items-center justify-center h-full bg-black backdrop-blur-sm text-white">
+              <div className="w-8 h-8 rounded-full border-4 border-white/20 border-t-white animate-spin"></div>
+              <p className="mt-3 text-lg opacity-80">Preparing your experience…</p>
+            </div>
+          }
+        >
+          {/* Balatro MUST call handleBgLoadComplete when it finishes loading */}
+          <Balatro onLoadComplete={handleBgLoadComplete} /> 
+        </Suspense>
+      </div>
 
-      {/* ---------- MAIN UI (always render, animate when ready) ---------- */}
-      <div ref={uiRef} className="app-ui relative z-10">
+      {/* ---------- MAIN UI (Hidden until Balatro is loaded) ---------- */}
+      {/* Initial opacity is 0 to keep it hidden before animation */}
+      <div 
+          ref={uiRef} 
+          className="app-ui relative z-10"
+          style={{ opacity: 0 }} 
+      >
         <Toaster />
         <Routes>
           <Route
